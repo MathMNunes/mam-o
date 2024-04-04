@@ -1,10 +1,9 @@
-from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 import numpy as np
 import os
 from configs.settings import BASE_DIR
 import matplotlib
-from PIL import Image
 import matplotlib
 matplotlib.use('agg')
 import tensorflow as tf
@@ -12,6 +11,7 @@ import cv2
 from django.http import JsonResponse
 
 def verify_papaya_view(request):
+    
     '''Docstring here.'''
     arquivo = None
     mensagens = []

@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA Mamões</title>
+    <style>
+        body {
+            background-image: url('{{ STATIC_URL }}/static/background.png');
+            background-size: cover; /* Ajusta o tamanho da imagem para cobrir toda a área do corpo */
+            background-position: center; /* Centraliza a imagem */
+            background-repeat: no-repeat; /* Evita a repetição da imagem */
+            /* Adicione outras propriedades de estilo conforme necessário */
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        form {
+            max-width: 400px; /* Defina a largura máxima do formulário */
+            margin: 0 auto; /* Centraliza o formulário horizontalmente */
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.5); /* Cor de fundo com transparência */
+            border-radius: 10px; /* Borda arredondada */
+        }
+
+        input[type="file"] {
+            margin-bottom: 10px;
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button[type="submit"] {
+            background-color: orange; /* Cor de fundo do botão */
+            color: black; /* Cor do texto do botão */
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s; /* Transição suave da cor de fundo */
+        }
+
+        button[type="submit"]:hover {
+            background-color: #ff9900; /* Cor de fundo do botão ao passar o mouse */
+        }
+
+        h1 {
+            text-align: center;
+        }
+        /* CSS para estilizar o botão "Treinar" */
+        a button {
+            display: block; /* Para que o botão se torne um bloco e ocupe a largura total do contêiner */
+            margin: 20px auto; /* Define margens para centralizar o botão */
+            padding: 10px 20px;
+            background-color: orange; /* Cor de fundo do botão */
+            color: black; /* Cor do texto do botão */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s; /* Transição suave da cor de fundo */
+            text-decoration: none; /* Remove o sublinhado padrão do link */
+            text-align: center; /* Centraliza o texto no botão */
+            width: 150px; /* Defina uma largura fixa para o botão, ajuste conforme necessário */
+        }
+
+        a button:hover {
+            background-color: #ff9900; /* Cor de fundo do botão ao passar o mouse */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Envie o arquivo</h1>
+    <form id="uploadForm" enctype="multipart/form-data" method="POST">
+        {% csrf_token %}
+        <input type="file" name="arquivo">
+        <br>
+        <h1></h1>
+        <button type="submit">Enviar arquivo</button>
+        <h1>Resultado: {% for mensagem in mensagens %}{{mensagem|default:""}}{% endfor %}</h1>
+    </form>
+    <br>
+    <br>
+    {% if request.user.is_superuser %}
+    <a href="/train-papaya/">
+        <button title="Clique para treinar a aplicação novamente">Treinar a aplicação</button>
+    </a>
+    {% endif %}
+
+    <script>
+        document.getElementById("uploadForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Previne o comportamento padrão do formulário
+
+            var formData = new FormData(this); // Cria um objeto FormData com os dados do formulário
+            formData.append("methodJson", "True"); // Adiciona um parâmetro "methodJson" ao FormData
+
+            var requestOptions = {
+                method: 'POST',
+                body: formData,
+                redirect: 'follow'
+            };
+
+            // Envie os dados do formulário usando fetch()
+            fetch("http://localhost:8000", requestOptions)
+                .then(response => response.json()) // Transforma a resposta em JSON
+                .then(data => {
+                    // Atualize a interface do usuário com o resultado da solicitação
+                    document.querySelector("h1").innerText = "Resultado: " + data.mensagens.join(" ");
+                })
+                .catch(error => console.error('Erro ao enviar solicitação:', error));
+        });
+    </script>
+
+</body>
+</html>
