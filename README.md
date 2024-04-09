@@ -110,4 +110,4 @@ Este projeto está licenciado sob a [Licença MIT](https://opensource.org/licens
 
 ## Agradecimentos
 
-Agradecemos aos desenvolvedores, à comunidade de código aberto com as ferramentes abertas que utilizamos para construção deste projeto, a comunidade de Machine Learning ao professor Dr. pela disponibilização do dataset com as imagens dividas entre as classes.
+Agradecemos aos desenvolvedores, à comunidade de código aberto com as ferramentes abertas que utilizamos para construção deste projeto, a comunidade de Machine Learning, ao professor Dr. Nildo da Silva Dias pela disponibilização do dataset com as imagens.

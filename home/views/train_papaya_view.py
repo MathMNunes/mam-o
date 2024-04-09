@@ -219,7 +219,7 @@ def train_papaya_view(request):
         historico.to_csv(os.path.join(BASE_DIR, 'historico.csv'), index=False)
 
         # saving model
-        model.save(os.path.join(BASE_DIR, 'models_train/modelfile.h5'))
+        #model.save(os.path.join(BASE_DIR, 'models_train/modelfile.h5'))
 
         ### Futura Versão
         """ file_path = os.path.join(BASE_DIR, 'models_train/modelfile.h5')
