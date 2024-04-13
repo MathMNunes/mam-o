@@ -15,12 +15,11 @@ h1{
     text-align: center;
     font-weight: bold;
     color: #FC8A43;
-    font-size: 72px;
-    text-decoration: underline;
+    font-size: 2rem;
 }
 .container{
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
 }
 .cicle {
     width: 500px;
@@ -38,7 +37,7 @@ h1{
     font-weight: 700;
     font-size: 16px;
 }
-img {
+#captured-image {
     height: 400px;
     position: fixed;
     bottom: 130px ;
@@ -111,6 +110,23 @@ form{
 .cicle, img {
     pointer-events: none;
 }
+
+.maduro_mensagem {
+    color: orange;
+    font-weight: 700;
+}
+
+.parcialmente_maduro_mensagem {
+    color: yellowgreen;
+    font-weight: 700;
+}
+
+.nao_maduro_mensagem {
+    color: green;
+    font-weight: 700;
+
+}
+
 </style>
 <head>
     <meta charset="UTF-8">
@@ -123,10 +139,7 @@ form{
     <h1>IA MAMÕES</h1>
 
     <div class="container">
-        <div class="container-cicle">
-            <div class="cicle"></div>
-            <img src="../../static/image 1.png" alt="">
-        </div>
+        
         <div>
             <div id="video-container">
                 <p class="text-msg">Envie sua imagem aqui</p>
@@ -136,12 +149,15 @@ form{
                 <br>
                 <canvas id="canvas" width="300" height="225" style="display: none;"></canvas>
                 <img id="captured-image" src="#" alt="Captured Image">
-                <p>Resultado:</p>
-                <p id="result-message"></p> 
+                
+                <div id="result-message">
+
+                </div> 
             </div>
-            <form id="form">
+            <!--Comentado envio de file-->
+            <form id="form" >
                 {% csrf_token %}
-                <input class="anexo" type="file" id="file-input" accept="image/*">
+                <input class="anexo" type="file" id="file-input" accept="image/*" style="display: none">
                 <input class="enviar" type="submit" value="Enviar">
             </form>
         </div>
@@ -177,6 +193,11 @@ form{
                 video.style.display = 'none'; 
                 fileInput.style.display = 'none';
                 enviar.style.display = 'block';
+                try{
+                    document.getElementById('duplicatedImg').remove();
+                }catch{
+                    console.log("Não foi possível remover a imagem")
+                }
             });
         
             // imagem no input 
@@ -193,7 +214,7 @@ form{
                     reader.readAsDataURL(fileInput.files[0]);
                 }
             });
-        
+
             // Submit form
             form.addEventListener('submit', function(event) {
                 event.preventDefault();
@@ -206,17 +227,30 @@ form{
                 // Envia a imagem para o servidor
                 fetch('/', { 
                     method: 'POST',
-                    body: formData
+                    body: formData,
+                    redirect: 'follow'
                 })
                 .then(response => response.json())
                 .then(data => {
-                    resultMessage.textContent = data.result; 
+                    let mensagem = data.mensagens[0];
+                    if (mensagem == "O modelo prevê que a fruta é maduro."){
+                        mensagem = `<span class="maduro_mensagem">${mensagem}</span>`;
+                    }else if (mensagem == "O modelo prevê que a fruta é parcialmente maduro."){
+                        mensagem = `<span class="parcialmente_maduro_mensagem">${mensagem}</span>`;
+                    }else{
+                        mensagem = `<span class="nao_maduro_mensagem">${mensagem}</span>`;
+                    }
+                    resultMessage.innerHTML = `<p>Resultado:${mensagem} <br><div id="duplicatedImg" style="heigth: 300px;"><img heigth="100px" src="${capturedImage.src}"></div></p> `;
+                    console.log(mensagem)
+                    
+
                     
                     resetUI(); 
                 })
                 .catch(error => {
                     console.error('Erro ao enviar a imagem:', error);
                 });
+                
             });
         
             // Função para converter uma data URI em um Blob
@@ -236,8 +270,10 @@ form{
                 capturedImage.src = '';
                 capturedImage.style.display = 'none';
                 video.style.display = 'block';
-                fileInput.style.display = 'block';
-                resultMessage.textContent = '';
+                enviar.style.display = 'none';
+                
+                //fileInput.style.display = 'block';
+                //resultMessage.textContent = '';
             }
         });
     </script>
