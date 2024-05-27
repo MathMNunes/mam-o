@@ -10,6 +10,7 @@ import tensorflow as tf
 import cv2
 from django.http import JsonResponse
 
+@csrf_exempt
 def verify_papaya_view(request):
     
     '''Docstring here.'''
